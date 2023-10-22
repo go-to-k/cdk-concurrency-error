@@ -1,16 +1,29 @@
 import * as cdk from 'aws-cdk-lib';
+import { aws_iam, aws_lambda } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
 
 export class CdkConcurrencyErrorStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // The code that defines your stack goes here
+    const lambda = new aws_lambda.Function(this, "LambdaFunction", {
+      runtime: aws_lambda.Runtime.NODEJS_18_X,
+      code: aws_lambda.Code.fromInline('// dummy'),
+      handler: "bootstrap",
+    });
 
-    // example resource
-    // const queue = new sqs.Queue(this, 'CdkConcurrencyErrorQueue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
+    lambda.role?.addManagedPolicy(
+      aws_iam.ManagedPolicy.fromAwsManagedPolicyName(
+        "service-role/AWSLambdaVPCAccessExecutionRole",
+      ),
+    );
+
+    lambda.role?.addManagedPolicy(
+      aws_iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaRole"),
+    );
+
+    lambda.role?.addManagedPolicy(
+      aws_iam.ManagedPolicy.fromAwsManagedPolicyName("AWSXRayDaemonWriteAccess"),
+    );
   }
 }
