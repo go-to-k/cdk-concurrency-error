@@ -62,3 +62,16 @@ IAM Policy Changes
 
 "--require-approval" is enabled and stack includes security-sensitive updates, but concurrency is greater than 1 so we are unable to get a confirmation from the user
 ```
+
+## --require-approval
+
+- never
+  - Approval is never required
+- any-change
+  - Requires approval on any IAM or security-group-related change
+- broadening (default)
+  - Requires approval when IAM statements or traffic rules are added; removals don't require approval
+
+A default value is `broadening` (so it is **enabled**).
+
+A concurrency is also greater than 1 and the stack includes security-sensitive updates, so the error occurred.
