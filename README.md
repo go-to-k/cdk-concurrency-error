@@ -1,14 +1,64 @@
-# Welcome to your CDK TypeScript project
+## Reproduction Steps
 
-This is a blank project for CDK development with TypeScript.
+```bash
+cdk deploy --all --concurrency 2
+```
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+Then the following message is shown:
 
-## Useful commands
+```
 
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `cdk deploy`      deploy this stack to your default AWS account/region
-* `cdk diff`        compare deployed stack with current state
-* `cdk synth`       emits the synthesized CloudFormation template
+✨  Synthesis time: 3.07s
+
+CdkConcurrencyErrorStack-us
+CdkConcurrencyErrorStack-ap
+This deployment will make potentially sensitive changes according to your current security approval level (--require-approval broadening).
+Please confirm you intend to make the following modifications:
+
+IAM Statement Changes
+┌───┬───────────────────────────────────┬────────┬────────────────┬──────────────────────────────┬───────────┐
+│   │ Resource                          │ Effect │ Action         │ Principal                    │ Condition │
+├───┼───────────────────────────────────┼────────┼────────────────┼──────────────────────────────┼───────────┤
+│ + │ ${LambdaFunction/ServiceRole.Arn} │ Allow  │ sts:AssumeRole │ Service:lambda.amazonaws.com │           │
+└───┴───────────────────────────────────┴────────┴────────────────┴──────────────────────────────┴───────────┘
+IAM Policy Changes
+┌───┬───────────────────────────────┬────────────────────────────────────────────────────────────────────────────────────┐
+│   │ Resource                      │ Managed Policy ARN                                                                 │
+├───┼───────────────────────────────┼────────────────────────────────────────────────────────────────────────────────────┤
+│ + │ ${LambdaFunction/ServiceRole} │ arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole     │
+│ + │ ${LambdaFunction/ServiceRole} │ arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole │
+│ + │ ${LambdaFunction/ServiceRole} │ arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaRole                   │
+│ + │ ${LambdaFunction/ServiceRole} │ arn:${AWS::Partition}:iam::aws:policy/AWSXRayDaemonWriteAccess                     │
+└───┴───────────────────────────────┴────────────────────────────────────────────────────────────────────────────────────┘
+(NOTE: There may be security-related changes not in this list. See https://github.com/aws/aws-cdk/issues/1299)
+
+This deployment will make potentially sensitive changes according to your current security approval level (--require-approval broadening).
+Please confirm you intend to make the following modifications:
+
+IAM Statement Changes
+┌───┬───────────────────────────────────┬────────┬────────────────┬──────────────────────────────┬───────────┐
+│   │ Resource                          │ Effect │ Action         │ Principal                    │ Condition │
+├───┼───────────────────────────────────┼────────┼────────────────┼──────────────────────────────┼───────────┤
+│ + │ ${LambdaFunction/ServiceRole.Arn} │ Allow  │ sts:AssumeRole │ Service:lambda.amazonaws.com │           │
+└───┴───────────────────────────────────┴────────┴────────────────┴──────────────────────────────┴───────────┘
+IAM Policy Changes
+┌───┬───────────────────────────────┬────────────────────────────────────────────────────────────────────────────────────┐
+│   │ Resource                      │ Managed Policy ARN                                                                 │
+├───┼───────────────────────────────┼────────────────────────────────────────────────────────────────────────────────────┤
+│ + │ ${LambdaFunction/ServiceRole} │ arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole     │
+│ + │ ${LambdaFunction/ServiceRole} │ arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole │
+│ + │ ${LambdaFunction/ServiceRole} │ arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaRole                   │
+│ + │ ${LambdaFunction/ServiceRole} │ arn:${AWS::Partition}:iam::aws:policy/AWSXRayDaemonWriteAccess                     │
+└───┴───────────────────────────────┴────────────────────────────────────────────────────────────────────────────────────┘
+(NOTE: There may be security-related changes not in this list. See https://github.com/aws/aws-cdk/issues/1299)
+
+
+ ❌ Deployment failed: Error: "--require-approval" is enabled and stack includes security-sensitive updates, but concurrency is greater than 1 so we are unable to get a confirmation from the user
+    at /Users/goto/pc/github/cdk-concurrency-error/node_modules/aws-cdk/lib/index.js:470:179289
+    at withCorkedLogging (/Users/goto/pc/github/cdk-concurrency-error/node_modules/aws-cdk/lib/index.js:1:34861)
+    at Object.deployStack2 [as deployStack] (/Users/goto/pc/github/cdk-concurrency-error/node_modules/aws-cdk/lib/index.js:470:179026)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /Users/goto/pc/github/cdk-concurrency-error/node_modules/aws-cdk/lib/index.js:470:163159
+
+"--require-approval" is enabled and stack includes security-sensitive updates, but concurrency is greater than 1 so we are unable to get a confirmation from the user
+```
